@@ -6,13 +6,20 @@ page-changer can be used to search through text based files and make change to t
 
 This is done using a config file to tell page-changer what to alter in what file type.
 
+#### Installation
+
+page-changer is a single file script so it can just be downloaded on its own. 
+
+It does have a dependancy on [PyYAML](http://pyyaml.org/wiki/PyYAML), so this needs to be installed on the system along with Python.
+
 #### Usage
 
-page-changer uses a config file that you specify as a command line argument to know what files to change.
+page-changer uses a YAML config file that you specify as a command line argument to know what files to change.
 
 The format of the config file is:
 
-    <file mask to alter>:
+    - parser:
+        name: <name of the set>
         remove:
             - <reg ex to remove from line>
             
@@ -23,3 +30,5 @@ The format of the config file is:
         replace: 
             - find: <text to that will be replaced use %rep%>
               replace: <text to replace>
+                
+    - parser: ... <put n or more parser sets, to parse different file types, or alterations required>

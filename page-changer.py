@@ -1,6 +1,9 @@
-﻿import optparse
+﻿import argparse
 import os
 import datetime
+import re
+import yaml
+import fnmatch
 
 # tags in file to look for
 HEAD = '<head'
@@ -21,19 +24,40 @@ rejected_list = []
 parseable_list = []
 non_master_list = []
 
-def get_aspx_files(dir_path, recursive):
-    # initialise a list for the aspx files
-    aspx_files=[]
+def get_files(dir_path, file_mask, recursive):
+    # initialise a list for the files
+    files=[]
     for dirname, dirnames, filenames in os.walk(dir_path):
         # run through sub dirs if the recursive options is true
         if recursive:
             for subdirname in dirnames:
-                get_aspx_files(subdirname, True)
+                get_files(subdirname, True)
         for filename in filenames:
-            if filename[-4:] == 'aspx':
-                aspx_files.append("%s\%s" % (dirname, filename))                
-    return aspx_files
- 
+            if fnmatch.fnmatch(filename, file_mask):
+                print 'Adding %s to process list.' % filename
+                files.append("%s\%s" % (dirname, filename))                
+    return files
+
+def process_file(file_handle, parse_config):
+    for line in file_handle:
+        for r in parse_config['remove']:
+            line = re.sub(r, '', line)
+            file_handler.write(line)
+    return file_handle
+            
+def process_files(file_list, parse_config):
+    for f in file_list:
+        try:
+            file = open(f, 'r+')
+            print 'Processing: %s' % f
+            new_file = process_file(file, parse_config)
+            new_file.close()
+        except IOError as err:
+            print 'There was a file error for %s: %s' % (f, err)
+            file.close()
+            
+                
+    
 def can_process_file(file_handle, file_path):
     global files_parsed
     global files_rejected
@@ -104,21 +128,21 @@ def write_to_log(file_path):
     file.close()
     
 def main(): 
-    p = optparse.OptionParser()
-    p.add_option('--dir', '-d', default='.', help='The directory to search for aspx files.')
-    p.add_option('--recursive', '-r', action="store_false", default=False, help='Recursivly search for aspx files inside dir.')
-    p.add_option('--logfile', '-l', default=None, help='Log file to output results and file lists.')
-    (options, args) = p.parse_args()
-    # get all the aspx files to work with
-    aspx_files = get_aspx_files(options.dir, options.recursive)
-    for file_path in aspx_files:
-        file = open(file_path)
-        print 'Checking file %s.' % file_path
-        if not can_process_file(file, file_path):
-            print 'The file %s cannot be processed automatically.' % file_path
-        file.close()
-        
-    if options.logfile:
+    p = argparse.ArgumentParser(description="Mass edit text files.")
+    p.add_argument('config', metavar='C', type=str, help='Config file to use.')
+    p.add_argument('dir', metavar='D', type=str, help='Directory to search for files to change.')
+    p.add_argument('--recursive', '-r', action="store_false", default=False, help='Recursivly search for files inside dir.')
+    p.add_argument('--logfile', '-l', default=None, help='Log file to output results and file lists.')
+    args = p.parse_args()
+    
+    config = parse_yaml(args.config)
+    
+    for parser in config: 
+        print 'Parsing files for: %s' % parser['name']
+        files = get_files(args.dir, parser['mask'],args.recursive)
+        process_files(files, parser)
+    
+    if args.logfile:
         write_to_log(options.logfile)
     
     print """
@@ -126,7 +150,10 @@ def main():
     Files parsed: %d
     Files Rejected: %d
     """ % (files_parsed, files_rejected)
-        
+ 
+def parse_yaml(file_path):   
+    return yaml.load(file(file_path, 'r'))
+
     
 if __name__ == '__main__':
     main()
