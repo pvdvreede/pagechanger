@@ -32,3 +32,37 @@ The format of the config file is:
               replace: <text to replace>
                 
       - name: ... <put n or more parser sets, to parse different file types, or alterations required>
+
+An example file would be:
+
+    - name: html
+      mask: 'Search.html'
+      remove:
+      - <head>
+      - <html xmlns="http://www.w3.org/1999/xhtml">
+      - </head>
+      - <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+      - </html>
+      - </body>
+      - <body>
+      replace:
+      - find: colou*r
+        replace: something else
+
+To run the config over a set of files use the command line tool:
+
+    python page-changer.py config.yaml /path/to/files/to/search
+    
+Here are the command line options and arguments:
+
+    usage: page-changer.py [-h] [--recursive] C D
+
+    Mass edit text files.
+
+    positional arguments:
+      C                Config file to use.
+      D                Directory to search for files to change.
+
+    optional arguments:
+      -h, --help       show this help message and exit
+      --recursive, -r  Recursivly search for files inside dir.
