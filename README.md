@@ -18,17 +18,17 @@ page-changer uses a YAML config file that you specify as a command line argument
 
 The format of the config file is:
 
-    - parser:
-        name: <name of the set>
+      - name: <name of the set>
         remove:
             - <reg ex to remove from line>
             
         add:
             - text: <text to place>
-              [above | below]: <the line above or below to put the text>
+              position: [above | below]
+              current: <the text to place above or below>
               
         replace: 
             - find: <text to that will be replaced use %rep%>
               replace: <text to replace>
                 
-    - parser: ... <put n or more parser sets, to parse different file types, or alterations required>
+      - name: ... <put n or more parser sets, to parse different file types, or alterations required>
