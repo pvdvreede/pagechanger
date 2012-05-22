@@ -39,6 +39,7 @@ def process_file(file_handle, parse_config):
     for c in parse_config['replace']:
         print c
         file_contents = re.sub(c['find'], c['replace'], file_contents)
+    file_handle.truncate()
     file_handle.write(file_contents)
     return file_handle
             

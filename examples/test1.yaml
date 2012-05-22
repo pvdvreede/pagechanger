@@ -12,5 +12,6 @@
   replace:
   - find: <%=msHtmlBodyStart%>
     replace: <asp:content>
-
+  - find: <%=\s*msHtmlBodyEnd\s*%>
+    replace: </asp:content>
   
