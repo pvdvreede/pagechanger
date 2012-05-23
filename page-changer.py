@@ -33,12 +33,12 @@ def get_files(dir_path, file_mask, recursive):
 def process_file(file_handle, parse_config):
     file_contents = file_handle.read()
     file_handle.seek(0)
-    for r in parse_config['remove']:
-        print r
-        file_contents = re.sub(r, '', file_contents)
     for c in parse_config['replace']:
         print c
         file_contents = re.sub(c['find'], c['replace'], file_contents)
+    for r in parse_config['remove']:
+        print r
+        file_contents = re.sub(r, '', file_contents)
     file_handle.truncate()
     file_handle.write(file_contents)
     return file_handle
