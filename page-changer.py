@@ -34,10 +34,8 @@ def process_file(file_handle, parse_config):
     file_contents = file_handle.read()
     file_handle.seek(0)
     for c in parse_config['replace']:
-        print c
         file_contents = re.sub(c['find'], c['replace'], file_contents)
     for r in parse_config['remove']:
-        print r
         file_contents = re.sub(r, '', file_contents)
     file_handle.truncate()
     file_handle.write(file_contents)
@@ -54,10 +52,10 @@ def process_files(file_list, parse_config):
         except IOError as err:
             print 'There was a file error for %s.' % (f)
             print err
-            raise err
         else:
             files_parsed += 1
             new_file.close()
+            print 'Complete: %s' % f
 
 def main(): 
     p = argparse.ArgumentParser(description="Mass edit text files.")
