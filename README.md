@@ -19,13 +19,9 @@ page-changer uses a YAML config file that you specify as a command line argument
 The format of the config file is:
 
       - name: <name of the set>
+        criteria: <string or reg ex that must be present in the file for it to be processed>
         remove:
             - <reg ex to remove from line>
-            
-        add:
-            - text: <text to place>
-              position: [above | below]
-              current: <the text to place above or below>
               
         replace: 
             - find: <text to that will be replaced use %rep%>
@@ -36,6 +32,7 @@ The format of the config file is:
 An example file would be:
 
     - name: html
+      criteria: findme
       mask: 'Search.html'
       remove:
       - <head>

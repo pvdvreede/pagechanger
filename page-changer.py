@@ -8,13 +8,11 @@ import fnmatch
 # stats
 files_parsed = 0
 files_collected = 0
+files_scanned = 0
 
-# array of parsable and rejected files
-parsed_list = []
-
-
-def get_files(dir_path, file_mask, recursive):
+def get_files(dir_path, file_mask, recursive, config):
     global files_collected
+    global files_scanned
     
     # initialise a list for the files
     files=[]
@@ -22,14 +20,37 @@ def get_files(dir_path, file_mask, recursive):
         # run through sub dirs if the recursive option is true
         if recursive:
             for subdirname in dirnames:
-                get_files(subdirname, True)
+                get_files(subdirname, True, config)
         for filename in filenames:
             if fnmatch.fnmatch(filename, file_mask):
-                print 'Adding %s to process list.' % filename
-                files.append("%s\%s" % (dirname, filename))  
-                files_collected += 1    
+                files_scanned += 1
+                file_path = "%s\%s" % (dirname, filename)
+                if config['criteria']:
+                    if can_process_file(file_path, config['criteria']): 
+                        print 'Adding %s to process list.' % filename
+                        files.append(file_path)  
+                        files_collected += 1
+                    else:
+                        print 'Skipping file %s for not matching criteria' % filename
+                else:
+                    print 'Adding %s to process list.' % filename
+                    files.append(file_path)  
+                    files_collected += 1
     return files
 
+def can_process_file(file_path, criteria):
+    """ 
+    Use the criteria yaml config to determine if this file
+    should be put in the list for processing.
+    """
+    file_handle = open(file_path, 'r')
+    for line in file_handle:
+        if line.find(criteria) != -1:
+            file_handle.close()
+            return True
+    file_handle.close()        
+    return False
+    
 def process_file(file_handle, parse_config):
     file_contents = file_handle.read()
     file_handle.seek(0)
@@ -68,14 +89,15 @@ def main():
     
     for parser in config: 
         print 'Parsing files for: %s' % parser['name']
-        files = get_files(args.dir, parser['mask'], args.recursive)
+        files = get_files(args.dir, parser['mask'], args.recursive, parser)
         process_files(files, parser)
     
     print """
 Finished!
+Files scanned: %d
 Files matched: %d
 Files parsed: %d
-    """ % (files_collected, files_parsed)
+    """ % (files_scanned, files_collected, files_parsed)
  
 def parse_yaml(file_path):   
     return yaml.load(file(file_path, 'r'))
