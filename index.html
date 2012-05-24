@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="page-changer : File alteration bot for programmatically altering large amount of files with Regular Expressions." />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>page-changer</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/pvdvreede/page-changer">View on GitHub</a>
+
+          <h1 id="project_title">page-changer</h1>
+          <h2 id="project_tagline">File alteration bot for programmatically altering large amount of files with Regular Expressions.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/pvdvreede/page-changer/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/pvdvreede/page-changer/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>page-changer</h1>
+
+<h3>File alteration bot for programmatically altering large amount of files with Regular Expressions</h3>
+
+<p>page-changer can be used to search through text based files and make change to the text by adding, deleting, changing or a combination of all three.</p>
+
+<p>This is done using a config file to tell page-changer what to alter in what file type.</p>
+
+<h4>Installation</h4>
+
+<p>page-changer is a single file script so it can just be downloaded on its own. </p>
+
+<p>It does have a dependancy on <a href="http://pyyaml.org/wiki/PyYAML">PyYAML</a>, so this needs to be installed on the system along with Python.</p>
+
+<h4>Usage</h4>
+
+<p>page-changer uses a YAML config file that you specify as a command line argument to know what files to change.</p>
+
+<p>The format of the config file is:</p>
+
+<pre><code>  - name: &lt;name of the set&gt;
+    criteria: &lt;string or reg ex that must be present in the file for it to be processed&gt;
+    remove:
+        - &lt;reg ex to remove from line&gt;
+
+    replace: 
+        - find: &lt;text to that will be replaced use %rep%&gt;
+          replace: &lt;text to replace&gt;
+
+  - name: ... &lt;put n or more parser sets, to parse different file types, or alterations required&gt;
+</code></pre>
+
+<p>An example file would be:</p>
+
+<pre><code>- name: html
+  criteria: findme
+  mask: 'Search.html'
+  remove:
+  - &lt;head&gt;
+  - &lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+  - &lt;/head&gt;
+  - &lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;
+  - &lt;/html&gt;
+  - &lt;/body&gt;
+  - &lt;body&gt;
+  replace:
+  - find: colou*r
+    replace: something else
+</code></pre>
+
+<p>To run the config over a set of files use the command line tool:</p>
+
+<pre><code>python page-changer.py config.yaml /path/to/files/to/search
+</code></pre>
+
+<p>Here are the command line options and arguments:</p>
+
+<pre><code>usage: page-changer.py [-h] [--recursive] C D
+
+Mass edit text files.
+
+positional arguments:
+  C                Config file to use.
+  D                Directory to search for files to change.
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --recursive, -r  Recursivly search for files inside dir.
+</code></pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">page-changer maintained by <a href="https://github.com/pvdvreede">pvdvreede</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-31949029-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>
