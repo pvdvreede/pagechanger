@@ -11,6 +11,10 @@ files_collected = 0
 files_scanned = 0
 
 def get_files(dir_path, file_mask, recursive, config):
+    """
+    Gets all the files that will be processed.
+    This takes the mask into account as well as the criteria set.
+    """
     global files_collected
     global files_scanned
     
@@ -54,10 +58,14 @@ def can_process_file(file_path, criteria):
 def process_file(file_handle, parse_config):
     file_contents = file_handle.read()
     file_handle.seek(0)
-    for c in parse_config['replace']:
-        file_contents = re.sub(c['find'], c['replace'], file_contents)
-    for r in parse_config['remove']:
-        file_contents = re.sub(r, '', file_contents)
+    try:
+		for c in parse_config['replace']:
+			file_contents = re.sub(c['find'], c['replace'], file_contents)
+		for r in parse_config['remove']:
+			file_contents = re.sub(r, '', file_contents)
+	# ignore exceptions when a key in the config doesnt exist - they are not compulsary
+    except KeyError:
+		pass
     file_handle.truncate()
     file_handle.write(file_contents)
     return file_handle
