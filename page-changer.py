@@ -64,7 +64,7 @@ def can_process_file(file_path, criteria):
     """
     file_handle = open(file_path, 'r')
     for line in file_handle:
-        if line.find(criteria) != -1:
+        if re.search(criteria, line) != None:
             file_handle.close()
             return True
     file_handle.close()        
