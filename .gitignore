@@ -31,7 +31,8 @@ develop-eggs
 
 # Installer logs
 pip-log.txt
-
+dist/
+MANIFEST
 
 # Mac crap
 .DS_Store
