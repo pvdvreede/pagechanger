@@ -4,6 +4,7 @@ import datetime
 import re
 import yaml
 import fnmatch
+import sys
 
 # stats
 files_parsed = 0
@@ -108,8 +109,12 @@ def main():
     p.add_argument('--recursive', '-r', action="store_false", default=False, help='Recursivly search for files inside dir.')
     args = p.parse_args()
     
-    config = parse_yaml(args.config)
-    
+    try:
+        config = parse_yaml(args.config)
+    except yaml.scanner.ScannerError as e:
+        print "There is an error in your config file! Please check it and try again."  
+        sys.exit(1)
+
     for parser in config: 
         print 'Parsing files for: %s' % parser['name']
         files = get_files(args.dir, parser['mask'], args.recursive, parser)
@@ -121,6 +126,8 @@ Files scanned: %d
 Files matched: %d
 Files parsed: %d
     """ % (files_scanned, files_collected, files_parsed)
+
+    sys.exit(0)
  
 def parse_yaml(file_path):   
     return yaml.load(file(file_path, 'r'))
