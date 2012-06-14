@@ -20,6 +20,8 @@ The format of the config file is:
 
       - name: <name of the set>
         criteria: <string or reg ex that must be present in the file for it to be processed>
+        exceptions:
+        - <list of filenames (without paths) that match the criteria but you want to ignore explicitly>
         remove:
             - <reg ex to remove from line>
               
@@ -33,6 +35,8 @@ An example file would be:
 
     - name: html
       criteria: findme
+      exceptions:
+      - dontchangeme.txt
       mask: 'Search.html'
       remove:
       - <head>
@@ -48,7 +52,7 @@ An example file would be:
 
 To run the config over a set of files use the command line tool:
 
-    python page-changer.py config.yaml /path/to/files/to/search
+    page-changer.py config.yaml /path/to/files/to/search
     
 Here are the command line options and arguments:
 
