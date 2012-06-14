@@ -10,6 +10,18 @@ files_parsed = 0
 files_collected = 0
 files_scanned = 0
 
+def is_exception(filename, config):
+    """
+    Check to see if the filename is on the config exceptions list
+    """
+    if 'exceptions' in config:
+        filename_lower = filename.lower()
+        # do case insensitive match of filename against exceptions and return the outcome
+        return any(filename_lower == val.lower() for val in config['exceptions'])
+    else:
+        return False
+
+
 def get_files(dir_path, file_mask, recursive, config):
     """
     Gets all the files that will be processed.
@@ -26,20 +38,23 @@ def get_files(dir_path, file_mask, recursive, config):
             for subdirname in dirnames:
                 get_files(subdirname, True, config)
         for filename in filenames:
-            if fnmatch.fnmatch(filename, file_mask):
-                files_scanned += 1
-                file_path = "%s\%s" % (dirname, filename)
-                if config['criteria']:
-                    if can_process_file(file_path, config['criteria']): 
+            if fnmatch.fnmatch(filename, file_mask): 
+                if not is_exception(filename, config):
+                    files_scanned += 1
+                    file_path = "%s\%s" % (dirname, filename)
+                    if 'criteria' in config:
+                        if can_process_file(file_path, config['criteria']): 
+                            print 'Adding %s to process list.' % filename
+                            files.append(file_path)  
+                            files_collected += 1
+                        else:
+                            print 'Skipping file %s for not matching criteria.' % filename
+                    else:
                         print 'Adding %s to process list.' % filename
                         files.append(file_path)  
                         files_collected += 1
-                    else:
-                        print 'Skipping file %s for not matching criteria' % filename
                 else:
-                    print 'Adding %s to process list.' % filename
-                    files.append(file_path)  
-                    files_collected += 1
+                    print 'Skipping file %s for being an exception.' % filename
     return files
 
 def can_process_file(file_path, criteria):
