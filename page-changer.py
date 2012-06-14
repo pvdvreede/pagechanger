@@ -58,14 +58,12 @@ def can_process_file(file_path, criteria):
 def process_file(file_handle, parse_config):
     file_contents = file_handle.read()
     file_handle.seek(0)
-    try:
+    if parse_config['replace']:
         for c in parse_config['replace']:
             file_contents = re.sub(c['find'], c['replace'], file_contents)
+    if parse_config['remove']:
         for r in parse_config['remove']:
             file_contents = re.sub(r, '', file_contents)
-    # ignore exceptions when a key in the config doesnt exist - they are not compulsary
-    except KeyError:
-		pass
     file_handle.truncate()
     file_handle.write(file_contents)
     return file_handle
