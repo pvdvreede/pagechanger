@@ -1,4 +1,6 @@
-﻿import argparse
+﻿#! /usr/bin/env python
+
+import argparse
 import os
 import datetime
 import re
