@@ -81,6 +81,8 @@ def process_files(file_list, parse_config):
         except IOError as err:
             print 'There was a file error for %s.' % (f)
             print err
+        except Exception as err:
+            print "There was an error processing file %s: %s" % (f, err.message)
         else:
             files_parsed += 1
             new_file.close()
