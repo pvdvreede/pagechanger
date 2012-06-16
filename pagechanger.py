@@ -33,7 +33,7 @@ def get_files(dir_path, file_mask, recursive, config):
     """
     global files_collected
     global files_scanned
-    
+
     # initialise a list for the files
     files=[]
     if recursive:
@@ -47,27 +47,27 @@ def get_files(dir_path, file_mask, recursive, config):
         filenames_list = [{ 'dir': dir_path, 'file': x } for x in os.listdir(dir_path) \
                           if os.path.isfile(os.path.join(dir_path, x))]
     for filename in filenames_list:
-        if fnmatch.fnmatch(filename['file'], file_mask): 
+        if fnmatch.fnmatch(filename['file'], file_mask):
             if not is_exception(filename['file'], config):
                 files_scanned += 1
-                file_path = "%s\%s" % (filename['dir'], filename['file'])
+                file_path = os.path.join(filename['dir'], filename['file'])
                 if 'criteria' in config:
-                    if can_process_file(file_path, config['criteria']): 
+                    if can_process_file(file_path, config['criteria']):
                         print 'Adding %s to process list.' % filename['file']
-                        files.append(file_path)  
+                        files.append(file_path)
                         files_collected += 1
                     else:
                         print 'Skipping file %s for not matching criteria.' % filename['file']
                 else:
                     print 'Adding %s to process list.' % filename['file']
-                    files.append(file_path)  
+                    files.append(file_path)
                     files_collected += 1
             else:
                 print 'Skipping file %s for being an exception.' % filename['file']
     return files
 
 def can_process_file(file_path, criteria):
-    """ 
+    """
     Use the criteria yaml config to determine if this file
     should be put in the list for processing.
     """
@@ -76,9 +76,9 @@ def can_process_file(file_path, criteria):
         if re.search(criteria, line) != None:
             file_handle.close()
             return True
-    file_handle.close()        
+    file_handle.close()
     return False
-    
+
 def process_file(file_handle, parse_config):
     file_contents = file_handle.read()
     file_handle.seek(0)
@@ -91,15 +91,15 @@ def process_file(file_handle, parse_config):
     file_handle.truncate()
     file_handle.write(file_contents)
     return file_handle
-            
+
 def process_files(file_list, parse_config):
     global files_parsed
-    
+
     for f in file_list:
         try:
             file = open(f, 'r+')
             print 'Processing: %s' % f
-            new_file = process_file(file, parse_config)          
+            new_file = process_file(file, parse_config)
         except IOError as err:
             print 'There was a file error for %s.' % (f)
             print err
@@ -110,24 +110,24 @@ def process_files(file_list, parse_config):
             new_file.close()
             print 'Complete: %s' % f
 
-def main(): 
+def main():
     p = argparse.ArgumentParser(description="Mass edit text files.")
     p.add_argument('config', metavar='C', type=str, help='Config file to use.')
     p.add_argument('dir', metavar='D', type=str, help='Directory to search for files to change.')
     p.add_argument('--recursive', '-r', action="store_false", default=False, help='Recursivly search for files inside dir.')
     args = p.parse_args()
-    
+
     try:
         config = parse_yaml(args.config)
     except yaml.scanner.ScannerError as e:
-        print "There is an error in your config file! Please check it and try again."  
+        print "There is an error in your config file! Please check it and try again."
         sys.exit(1)
 
-    for parser in config: 
+    for parser in config:
         print 'Parsing files for: %s' % parser['name']
         files = get_files(args.dir, parser['mask'], args.recursive, parser)
         process_files(files, parser)
-    
+
     print """
 Finished!
 Files scanned: %d
@@ -136,12 +136,11 @@ Files parsed: %d
     """ % (files_scanned, files_collected, files_parsed)
 
     sys.exit(0)
- 
-def parse_yaml(file_path):   
+
+def parse_yaml(file_path):
     return yaml.load(file(file_path, 'r'))
 
-    
+
 if __name__ == '__main__':
     main()
-    
-    
+
