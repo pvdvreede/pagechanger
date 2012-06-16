@@ -13,6 +13,7 @@ files_parsed = 0
 files_collected = 0
 files_scanned = 0
 
+
 def is_exception(filename, config):
     """
     Check to see if the filename is on the config exceptions list
@@ -35,29 +36,34 @@ def get_files(dir_path, file_mask, recursive, config):
     
     # initialise a list for the files
     files=[]
-    for dirname, dirnames, filenames in os.walk(dir_path):
-        # run through sub dirs if the recursive option is true
-        if recursive:
-            for subdirname in dirnames:
-                get_files(subdirname, True, config)
-        for filename in filenames:
-            if fnmatch.fnmatch(filename, file_mask): 
-                if not is_exception(filename, config):
-                    files_scanned += 1
-                    file_path = "%s\%s" % (dirname, filename)
-                    if 'criteria' in config:
-                        if can_process_file(file_path, config['criteria']): 
-                            print 'Adding %s to process list.' % filename
-                            files.append(file_path)  
-                            files_collected += 1
-                        else:
-                            print 'Skipping file %s for not matching criteria.' % filename
-                    else:
-                        print 'Adding %s to process list.' % filename
+    if recursive:
+        # if its recursive, then walk the dirs for all files
+        filenames_list = []
+        for dirname, dirnames, filenames in os.walk(dir_path):
+            for filename in filenames:
+                filenames_list.append({ 'dir' : dirname, 'file': filename })
+    else:
+        # if its not recursive, then just get a list of all the files in the dir
+        filenames_list = [{ 'dir': dir_path, 'file': x } for x in os.listdir(dir_path) \
+                          if os.path.isfile(os.path.join(dir_path, x))]
+    for filename in filenames_list:
+        if fnmatch.fnmatch(filename['file'], file_mask): 
+            if not is_exception(filename['file'], config):
+                files_scanned += 1
+                file_path = "%s\%s" % (filename['dir'], filename['file'])
+                if 'criteria' in config:
+                    if can_process_file(file_path, config['criteria']): 
+                        print 'Adding %s to process list.' % filename['file']
                         files.append(file_path)  
                         files_collected += 1
+                    else:
+                        print 'Skipping file %s for not matching criteria.' % filename['file']
                 else:
-                    print 'Skipping file %s for being an exception.' % filename
+                    print 'Adding %s to process list.' % filename['file']
+                    files.append(file_path)  
+                    files_collected += 1
+            else:
+                print 'Skipping file %s for being an exception.' % filename['file']
     return files
 
 def can_process_file(file_path, criteria):
