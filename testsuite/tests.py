@@ -19,7 +19,7 @@ class PageChangerTests(unittest.TestCase):
                     'colou*r'
                     ]
                 }
-        self.test_path = os.path.dirname(__file__)
+        self.test_path = os.path.join(os.path.dirname(__file__), 'files')
 
     def test_exceptions(self):
         self.assertTrue(pagechanger.is_exception('testfile1.txt', self.config))
@@ -29,6 +29,9 @@ class PageChangerTests(unittest.TestCase):
         actual_files = pagechanger.get_files(self.test_path, self.config['mask'], True, self.config)
         self.assertEqual(3, len(actual_files))
 
+    def test_get_files(self):
+        actual_files = pagechanger.get_files(self.test_path, self.config['mask'], False, self.config)
+        self.assertEqual(2, len(actual_files))
 
 if __name__ == '__main__':
     unittest.main()
