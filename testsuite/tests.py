@@ -17,7 +17,8 @@ class PageChangerTests(unittest.TestCase):
                 'remove': [
                     'text',
                     'colou*r'
-                    ]
+                    ],
+                'criteria': r't[a-z]{2}t'
                 }
         self.test_path = os.path.join(os.path.dirname(__file__), 'files')
 
