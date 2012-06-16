@@ -32,6 +32,12 @@ class PageChangerTests(unittest.TestCase):
     def test_get_files(self):
         actual_files = pagechanger.get_files(self.test_path, self.config['mask'], False, self.config)
         self.assertEqual(1, len(actual_files))
+        
+    def test_file_mask(self):
+        actual_files = pagechanger.get_files(self.test_path, '*.nothing', True, self.config)
+        self.assertEqual(0, len(actual_files))
+        actual_files = pagechanger.get_files(self.test_path, '*.doc', True, self.config)
+        self.assertEqual(1, len(actual_files))
 
 if __name__ == '__main__':
     unittest.main()
