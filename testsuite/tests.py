@@ -27,11 +27,11 @@ class PageChangerTests(unittest.TestCase):
 
     def test_get_files_recursive(self):
         actual_files = pagechanger.get_files(self.test_path, self.config['mask'], True, self.config)
-        self.assertEqual(3, len(actual_files))
+        self.assertEqual(2, len(actual_files))
 
     def test_get_files(self):
         actual_files = pagechanger.get_files(self.test_path, self.config['mask'], False, self.config)
-        self.assertEqual(2, len(actual_files))
+        self.assertEqual(1, len(actual_files))
 
 if __name__ == '__main__':
     unittest.main()
