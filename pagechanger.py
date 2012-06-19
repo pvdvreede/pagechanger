@@ -47,9 +47,9 @@ def get_files(dir_path, file_mask, recursive, config):
                           if os.path.isfile(os.path.join(dir_path, x))]
     for filename in filenames_list:
         if fnmatch.fnmatch(filename['file'], file_mask):
+            file_path = os.path.join(filename['dir'], filename['file'])
             if not is_exception(filename['file'], config):
                 files_scanned += 1
-                file_path = os.path.join(filename['dir'], filename['file'])
                 if 'criteria' in config:
                     if can_process_file(file_path, config['criteria']):
                         print 'Adding %s to process list.' % filename['file']
