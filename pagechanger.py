@@ -56,13 +56,13 @@ def get_files(dir_path, file_mask, recursive, config):
                         files.append(file_path)
                         files_collected += 1
                     else:
-                        print 'Skipping file %s for not matching criteria.' % filename['file']
+                        print 'Skipping file %s for not matching criteria.' % file_path
                 else:
-                    print 'Adding %s to process list.' % filename['file']
+                    print 'Adding %s to process list.' % file_path
                     files.append(file_path)
                     files_collected += 1
             else:
-                print 'Skipping file %s for being an exception.' % filename['file']
+                print 'Skipping file %s for being an exception.' % file_path
     return files
 
 def can_process_file(file_path, criteria):
@@ -71,10 +71,10 @@ def can_process_file(file_path, criteria):
     should be put in the list for processing.
     """
     file_handle = open(file_path, 'r')
-    for line in file_handle:
-        if re.search(criteria, line) != None:
-            file_handle.close()
-            return True
+    file_contents = file_handle.read()
+    if re.search(criteria, file_contents) != None:
+        file_handle.close()
+        return True
     file_handle.close()
     return False
 
