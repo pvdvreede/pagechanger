@@ -116,7 +116,7 @@ def main():
     p = argparse.ArgumentParser(description="Mass edit text files.")
     p.add_argument('config', metavar='C', type=str, help='Config file to use.')
     p.add_argument('dir', metavar='D', type=str, help='Directory to search for files to change.')
-    p.add_argument('--recursive', '-r', action="store_false", default=False, help='Recursivly search for files inside dir.')
+    p.add_argument('--recursive', '-r', action="store_true", default=False, help='Recursivly search for files inside dir.')
     args = p.parse_args()
 
     try:
@@ -145,6 +145,7 @@ Files parsed: %d
     sys.exit(0)
 
 def parse_yaml(file_path):
+    print "Loading config file..."
     return yaml.load(file(file_path, 'r'))
 
 
