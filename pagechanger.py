@@ -13,7 +13,6 @@ files_parsed = 0
 files_collected = 0
 files_scanned = 0
 
-
 def is_exception(filename, config):
     """
     Check to see if the filename is on the config exceptions list
@@ -111,6 +110,9 @@ def process_files(file_list, parse_config):
             print 'Complete: %s' % f
 
 def main():
+    # Set the start time
+    time_started = datetime.datetime.now()
+
     p = argparse.ArgumentParser(description="Mass edit text files.")
     p.add_argument('config', metavar='C', type=str, help='Config file to use.')
     p.add_argument('dir', metavar='D', type=str, help='Directory to search for files to change.')
@@ -128,12 +130,17 @@ def main():
         files = get_files(args.dir, parser['mask'], args.recursive, parser)
         process_files(files, parser)
 
+    time_ended = datetime.datetime.now()
+    time_taken = time_ended - time_started
     print """
 Finished!
+Time started: %s
+Time ended: %s
+Time taken: %s
 Files scanned: %d
 Files matched: %d
 Files parsed: %d
-    """ % (files_scanned, files_collected, files_parsed)
+    """ % (str(time_started), str(time_ended), str(time_taken), files_scanned, files_collected, files_parsed) 
 
     sys.exit(0)
 
