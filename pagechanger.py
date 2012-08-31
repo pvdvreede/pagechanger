@@ -122,7 +122,7 @@ def main():
     try:
         config = parse_yaml(args.config)
     except yaml.scanner.ScannerError as e:
-        print "There is an error in your config file! Please check it and try again."
+        print "There is an error in your config file! Please check it and try again.\n%s" % e
         sys.exit(1)
 
     for parser in config:
